@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>UNESCO Heritage Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+    /* Slideshow styles */
+    .slideshow-main{position:relative;display:flex;align-items:center;justify-content:center;background:linear-gradient(#fff, #f7f9fb);padding:12px;border-radius:8px}
+    .slideshow-main img{max-width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12)}
+    .slide-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer}
+    .slide-btn.prev{left:10px}
+    .slide-btn.next{right:10px}
+    .thumbnails{display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding:6px}
+    .thumbnails .thumb{height:64px;cursor:pointer;border-radius:6px;opacity:.7;border:2px solid transparent}
+    .thumbnails .thumb.active{opacity:1;border-color:var(--accent)}
+    .indicator{width:10px;height:10px;border-radius:50%;background:#ddd;margin:0 4px;border:none}
+    .indicator.active{background:var(--accent)}
+    .slide-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+    </style>
+</head>
+<body class="bg-dashboard">
+    <div class="site-wrapper">
+        <header class="site-header">
+            <div class="site-title">
+                <h1>Heritage Treasures</h1>
+                <p>UNESCO World Heritage Dashboard</p>
+            </div>
+            <nav>
+                <a class="link" href="/">Home</a>
+            </nav>
+        </header>
+
+        <main class="main">
+            <div class="card">
+                <div class="panel center">
+                    <h2>🌍 UNESCO World Heritage Sites Dashboard (2019)</h2>
+                    <p class="muted">Interactive visualisation — explore by region, category and year.</p>
+                </div>
+
+                                                                
+
+
+                                                                {% if featured %}
+                                                                    <div style="text-align:center;margin-top:18px">
+                                                                       {% if featured %}
+                                                                       <img src="{{ url_for('static', filename=featured) }}"
+                                                                           alt="Featured dashboard image"
+                                                                           style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12)">
+                                                                       {% else %}
+                                                                       <img src="{{ url_for('static', filename='pic/Screenshot 2026-02-21 105238.png') }}"
+                                                                           alt="Featured dashboard image"
+                                                                           style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12)">
+                                                                       {% endif %}
+                                                                    </div>
+                                                                {% endif %}
+                                                                {% if images %}
+                                                                <div style="margin-top:18px">
+                                                                    <div class="slideshow">
+                                                                        <div class="slideshow-main">
+                                                                            <button class="slide-btn prev">‹</button>
+                                                                            <img id="slide-img" src="{{ url_for('static', filename=images[0]) }}" alt="slide-1">
+                                                                            <button class="slide-btn next">›</button>
+                                                                        </div>
+                                                                        <div class="slide-controls">
+                                                                            <div style="display:flex;align-items:center">
+                                                                                {% for img in images %}
+                                                                                    <button class="indicator" data-index="{{ loop.index0 }}"></button>
+                                                                                {% endfor %}
+                                                                            </div>
+                                                                            <div>
+                                                                                <button id="pause-btn" class="btn ghost">Pause</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="thumbnails">
+                                                                            {% for img in images %}
+                                                                                <img class="thumb{% if loop.first %} active{% endif %}" src="{{ url_for('static', filename=img) }}" data-index="{{ loop.index0 }}" alt="thumb-{{ loop.index }}">
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                {% endif %}
+
+                                                                <div style="margin-top:18px;text-align:right">
+                                                                                <a href="/logout" class="btn ghost">Logout</a>
+                                                                </div>
+            </div>
+        </main>
+
+        <footer class="footer">Data source: UNESCO · Built with Tableau & Flask</footer>
+    </div>
+        <!-- No extra JS required for the simple gallery -->
+</body>
+<script>
+(function(){
+    const imgs = [{% for img in images %}"{{ url_for('static', filename=img) }}"{% if not loop.last %}, {% endif %}{% endfor %}];
+    if(!imgs.length) return;
+    let idx = 0, timer = null, playing = true;
+    const slideImg = document.getElementById('slide-img');
+    const prevBtn = document.querySelector('.slide-btn.prev');
+    const nextBtn = document.querySelector('.slide-btn.next');
+    const pauseBtn = document.getElementById('pause-btn');
+    const indicators = Array.from(document.querySelectorAll('.indicator'));
+    const thumbs = Array.from(document.querySelectorAll('.thumb'));
+    function show(i){ idx = (i + imgs.length) % imgs.length; slideImg.src = imgs[idx]; indicators.forEach((b,j)=>b.classList.toggle('active', j===idx)); thumbs.forEach((t,j)=>t.classList.toggle('active', j===idx)); }
+    function next(){ show(idx+1); }
+    function prev(){ show(idx-1); }
+    function start(){ if(timer) clearInterval(timer); timer = setInterval(next, 3000); playing = true; pauseBtn.textContent='Pause'; }
+    function stop(){ if(timer) { clearInterval(timer); timer=null; } playing=false; pauseBtn.textContent='Play'; }
+    nextBtn.addEventListener('click', ()=>{ next(); stop(); });
+    prevBtn.addEventListener('click', ()=>{ prev(); stop(); });
+    pauseBtn.addEventListener('click', ()=>{ playing? stop(): start(); });
+    indicators.forEach((b,i)=> b.addEventListener('click', ()=>{ show(i); stop(); }));
+    thumbs.forEach((t,i)=> t.addEventListener('click', ()=>{ show(i); stop(); }));
+    show(0); start();
+})();
+</script>
+</html>

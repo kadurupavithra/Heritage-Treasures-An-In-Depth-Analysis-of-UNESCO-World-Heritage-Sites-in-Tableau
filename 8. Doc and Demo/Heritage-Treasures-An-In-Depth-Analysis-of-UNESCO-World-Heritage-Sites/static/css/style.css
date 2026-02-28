@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root{
+  --accent:#186FAF;
+  --accent-dark:#125680;
+  --card-bg: rgba(255,255,255,0.95);
+  --muted:#6b7280;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: url('/static/css/Heritage.jpg') center/cover no-repeat fixed;
+  color:#0f172a;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Dashboard-specific override: prevent the global Heritage.jpg background
+   from showing on the dashboard page which uses `body.bg-dashboard` */
+/* dashboard override removed — global background applies */
+
+/* Per-page background utility: add class to <body> like `bg-login` or `bg-dashboard` */
+.bg-login{background-image: url('/static/css/Heritage.jpg')}
+.bg-signup{background-image: url('/static/css/Heritage.jpg')}
+.bg-dashboard{background-image: url('/static/css/Heritage.jpg')}
+
+.site-wrapper{min-height:100vh;display:flex;flex-direction:column}
+
+header.site-header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:rgba(255,255,255,0.12);backdrop-filter: blur(6px);}
+.site-title{display:flex;gap:12px;align-items:center}
+.site-title h1{font-size:18px;margin:0;color:white}
+.site-title p{margin:0;font-size:12px;color:var(--muted)}
+
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:28px}
+
+.card{
+  width:100%;max-width:960px;background:var(--card-bg);border-radius:12px;padding:28px;box-shadow:0 8px 30px rgba(2,6,23,0.25);
+}
+
+.split{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center}
+@media(max-width:880px){.split{grid-template-columns:1fr}.site-title h1{font-size:16px}}
+
+.panel{padding:6px 10px}
+.panel h2{margin:0 0 8px 0;color:#0b2447}
+.panel p{margin:0;color:var(--muted)}
+
+.form-card{background:transparent;padding:18px}
+form{display:flex;flex-direction:column;gap:12px}
+input[type=email],input[type=password],input[type=text]{padding:12px 14px;border-radius:8px;border:1px solid #e6e9ee;font-size:14px}
+.btn{display:inline-block;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+.btn.primary{background:var(--accent);color:white}
+.btn.ghost{background:transparent;border:1px solid rgba(2,6,23,0.08)}
+
+.muted{color:var(--muted);font-size:14px}
+
+.footer{padding:14px 28px;text-align:center;color:#e6eef8;font-size:13px}
+
+/* small utilities */
+.center{text-align:center}
+.link{color:var(--accent);text-decoration:none;font-weight:600}
+
+/* Dashboard gallery */
+.gallery-main{width:100%;border-radius:8px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
+.gallery-main img{width:100%;height:auto;display:block}
+.gallery-thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px;margin-top:12px}
+.gallery-thumbs img{width:100%;height:70px;object-fit:cover;border-radius:6px;cursor:pointer;border:2px solid transparent}
+.gallery-thumbs img.active{border-color:var(--accent)}
+
+@media(max-width:520px){.gallery-thumbs img{height:56px}}
+
+/* Lightbox fullscreen */
+.lightbox{position:fixed;inset:0;background:rgba(2,6,23,0.8);display:none;align-items:center;justify-content:center;z-index:1200}
+.lightbox img{max-width:95%;max-height:90%;border-radius:8px}
+.lightbox.show{display:flex}
+.lightbox .close{position:absolute;top:20px;right:24px;color:white;font-size:22px;cursor:pointer}
